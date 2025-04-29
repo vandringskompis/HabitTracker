@@ -5,6 +5,7 @@
 //  Created by Camilla Falk on 2025-04-28.
 //
 
+
 import SwiftUI
 import CoreData
 
@@ -17,6 +18,11 @@ struct ContentView: View {
     private var items: FetchedResults<Item>
 
     var body: some View {
+        
+        HStack {
+            Image(systemName: "figure.run")
+            Image(systemName: "trophy")
+        }
         NavigationView {
             List {
                 ForEach(items) { item in
@@ -41,6 +47,8 @@ struct ContentView: View {
             Text("Select an item")
         }
     }
+    
+    
 
     private func addItem() {
         withAnimation {
