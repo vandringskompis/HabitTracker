@@ -18,11 +18,6 @@ struct ContentView: View {
     private var items: FetchedResults<Item>
 
     var body: some View {
-        
-        HStack {
-            Image(systemName: "figure.run")
-            Image(systemName: "trophy")
-        }
         NavigationView {
             List {
                 ForEach(items) { item in
