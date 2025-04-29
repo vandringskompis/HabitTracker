@@ -1,5 +1,5 @@
 //
-//  CreateAccountView.swift
+//  LogInView.swift
 //  HabitTracker
 //
 //  Created by Camilla Falk on 2025-04-29.
@@ -7,49 +7,40 @@
 
 import SwiftUI
 
-struct CreateAccountView: View {
-    
-    @State var name : String = ""
+struct LogInView: View {
+   
     @State var username : String = ""
     @State var password : String = ""
     
-    @StateObject var authViewModel = AuthViewModel()
-    
     @Environment(\.dismiss) var dismiss
-    
+        
     var body: some View {
         NavigationStack {
             ZStack{
                 LinearGradient(gradient: Gradient(colors: [.red, .green]),
                                startPoint: .top,
                                endPoint: .bottom)
-                    .ignoresSafeArea()
+                .ignoresSafeArea()
                 
                 VStack{
                     Spacer()
-                    
                     Text("HabitTracker")
                         .font(.system(size: 45))
                         .fontDesign(.monospaced)
                         .shadow(radius: 10.0, x: 20, y: 10)
                     
                     Spacer()
-                 
-                        customIcons()
+                   
+                    customIcons()
                     
                     Spacer()
-                    
-                    Text("Create account")
+                    Spacer()
+                    Text("Log in")
                         .font(.title)
                         .fontDesign(.monospaced)
                     
+                    
                     VStack(alignment: .leading, spacing: 15){
-                        
-                        Text("Name")
-                            .fontDesign(.monospaced)
-                        
-                        TextField("Name", text: $name)
-                            .customStyleTextFields()
                         
                         Text("Username")
                             .fontDesign(.monospaced)
@@ -65,7 +56,7 @@ struct CreateAccountView: View {
                         
                         HStack {
                             Spacer()
-                            Button("Create account") {
+                            Button("Sign in") {
                                 
                             }
                             .customStyleButton()
@@ -75,19 +66,11 @@ struct CreateAccountView: View {
                     }
                 }.padding()
             }
-            .toolbar() {
-                ToolbarItem(placement: .cancellationAction){
-                    Button("Back"){
-                        dismiss()
-                    }
-                    .fontDesign(.monospaced)
-                    .foregroundStyle(.black)
-                }
-            }
         }
+        .tint(.black)
     }
 }
 
 #Preview {
-    CreateAccountView()
+    LogInView()
 }

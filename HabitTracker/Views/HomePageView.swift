@@ -31,28 +31,29 @@ struct HomePageView: View {
                     
                     Spacer()
             
-                        HStack{
-                                
-                                Spacer()
-                               
-                                Button("Log in"){
-                                    
-                                }
+                    HStack{
+                        Spacer()
+                        
+                        NavigationLink(destination: LogInView()) {
+                            Text("Log in")
                                 .customStyleButton()
-                                
-                                Spacer()
-                                
-                                Button("Sign up"){
-                                    
-                                }
+                        }
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: CreateAccountView()) {
+                            Text("Sign up")
                                 .customStyleButton()
-                            
-                                Spacer()
-                            }
+                        }
+                        
+                        Spacer()
+                        
+                    }
                     Spacer()
                 }
             }
         }
+        .tint(.black)
     }
 }
 
