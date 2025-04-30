@@ -57,7 +57,7 @@ struct LogInView: View {
                         HStack {
                             Spacer()
                             Button("Sign in") {
-                                
+                                print("Hej")
                             }
                             .customStyleButton()
                             
