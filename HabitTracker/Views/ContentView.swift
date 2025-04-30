@@ -17,6 +17,8 @@ struct ContentView: View {
         sortDescriptors: [],
         animation: .default)
     private var habits: FetchedResults<Habit>
+    
+    @State var showAddHabitSheet = false
 
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
@@ -39,7 +41,8 @@ struct ContentView: View {
                     HStack{
                         Spacer()
                         Button("New habit"){
-                            addHabit()
+                            showAddHabitSheet = true
+                           // addHabit()
                             print("Hej")
                         }
                         .frame(width: 110, height: 50)
@@ -47,6 +50,12 @@ struct ContentView: View {
                         .foregroundStyle(.white)
                         .clipShape(.rect(cornerRadius: 15))
                         .fontDesign(.monospaced)
+                        
+                        .sheet(isPresented: $showAddHabitSheet){
+                            AddNewHabitView()
+                                .presentationDetents([.height(300), .medium, .large])
+                                .presentationDragIndicator(.automatic)
+                        }
                         
                     }
                     .padding()
@@ -65,24 +74,6 @@ struct ContentView: View {
         }
     }
     
-    private func addHabit() {
-        withAnimation {
-            let newHabit = Habit(context: viewContext)
-            newHabit.title = "Sleep 8 hours"
-            newHabit.streak = 0
-            newHabit.longestStreak = 0
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { habits[$0] }.forEach(viewContext.delete)
