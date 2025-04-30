@@ -8,52 +8,81 @@
 import SwiftUI
 
 struct HomePageView: View {
+    
+    @AppStorage("isLoggedIn") var isLoggedIn = true
+    
     var body: some View {
-        NavigationStack {
-            ZStack{
-                LinearGradient(gradient: Gradient(colors: [.red, .green]),
-                               startPoint: .top,
-                               endPoint: .bottom)
-                .ignoresSafeArea()
+        
+        if isLoggedIn {
+            TabView{
                 
-                VStack{
-                    
-                    Spacer()
-                    
-                    Text("HabitTracker")
-                        .font(.system(size: 45))
-                        .fontDesign(.monospaced)
-                     .shadow(radius: 10.0, x: 20, y: 10)
-                   
-                    Spacer()
-                    
-                    customIcons()
-                    
-                    Spacer()
-            
-                    HStack{
-                        Spacer()
-                        
-                        NavigationLink(destination: LogInView()) {
-                            Text("Log in")
-                                .customStyleButton()
-                        }
-                        
-                        Spacer()
-                        
-                        NavigationLink(destination: CreateAccountView()) {
-                            Text("Sign up")
-                                .customStyleButton()
-                        }
-                        
-                        Spacer()
-                        
+                ContentView()
+                    .tabItem {
+                        Image(systemName: "trophy")
+                        Text("Home")
                     }
-                    Spacer()
+                
+                ProgressView()
+                    .tabItem {
+                        Image(systemName: "trophy")
+                        Text("Progress")
+                    }
+                
+                LogInView()
+                    .tabItem {
+                        Image(systemName: "trophy")
+                        Text("LogIn")
+                    }
+            }
+        } else {
+            
+            NavigationStack {
+                
+                ZStack{
+                    LinearGradient(gradient: Gradient(colors: [.blue, .green]),
+                                   startPoint: .top,
+                                   endPoint: .bottom)
+                    .ignoresSafeArea()
+                    
+                    VStack{
+                        
+                        Spacer()
+                        
+                        Text("HabitTracker")
+                            .font(.system(size: 45))
+                            .fontDesign(.monospaced)
+                            .shadow(radius: 10.0, x: 20, y: 10)
+                        
+                        Spacer()
+                        
+                        customIcons()
+                        
+                        Spacer()
+                        
+                        HStack{
+                            Spacer()
+                            
+                            NavigationLink(destination: LogInView()) {
+                                Text("Log in")
+                                    .customStyleButton()
+                            }
+                            
+                            Spacer()
+                            
+                            NavigationLink(destination: CreateAccountView()) {
+                                Text("Sign up")
+                                    .customStyleButton()
+                            }
+                            
+                            Spacer()
+                            
+                        }
+                        Spacer()
+                    }
                 }
             }
+            .tint(.black)
         }
-        .tint(.black)
     }
 }
 

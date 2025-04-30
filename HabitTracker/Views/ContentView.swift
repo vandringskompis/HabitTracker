@@ -23,7 +23,9 @@ struct ContentView: View {
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
     var body: some View {
+       
         NavigationView {
+          
             ZStack{
                 LinearGradient(gradient: Gradient(colors: [.blue, .green]),
                                startPoint: .top,
@@ -31,6 +33,7 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 
                 VStack {
+                    
                     HStack{
                         Spacer()
                         Text("Habits")
@@ -42,8 +45,6 @@ struct ContentView: View {
                         Spacer()
                         Button("New habit"){
                             showAddHabitSheet = true
-                           // addHabit()
-                            print("Hej")
                         }
                         .frame(width: 110, height: 50)
                         .background(Color.indigo)
@@ -60,15 +61,22 @@ struct ContentView: View {
                     }
                     .padding()
                     
+                    
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 20){
-                            ForEach(habits) {
+                            ForEach(habits, id: \.self) {
                                 habit in
-                                HabitCardView(habit: habit)
+                                NavigationLink(destination: HabitView(/*habit: habit)*/)){
+                                    HabitCardView(habit: habit)
+                                        .onTapGesture {
+                                            
+                                        }
+                                }
                             }
                         }
                         .padding()
                     }
+                    
                 }
             }
         }
@@ -107,40 +115,36 @@ struct HabitCardView : View {
     
     var body : some View {
         let myColor = randomColor()
-       
-        ZStack(alignment: .topTrailing) {
-            
-            VStack {
-                Text(habit.title ?? "2")
-            }
-            .onTapGesture {
-                print("Kort tryckts")
-            }
-            .frame(width: 175, height: 75)
-            .background(Color(myColor))
-            .contentShape(Rectangle())
-            .clipShape(.rect(cornerRadius: 15))
-            .overlay(RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.black, lineWidth: 1))
-            
-            
-           Button(action: {
-                isChecked = true
-               NSLog("Knappen try")
+        
+            ZStack(alignment: .topTrailing) {
                 
-            }) {
-                Circle()
-                    .fill(isChecked ? Color.green : Color.gray)
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Image(systemName: "trophy")
-                            .opacity(isChecked ? 1 : 0)
-                            .foregroundStyle(.black)
-                    )
+                VStack {
+                    Text(habit.title ?? "Text")
+                }
+                .frame(width: 175, height: 75)
+                .background(Color(myColor))
+                .contentShape(Rectangle())
+                .clipShape(.rect(cornerRadius: 15))
+                .overlay(RoundedRectangle(cornerRadius: 15)
+                    .stroke(Color.black, lineWidth: 1))
+                
+                
+                Button(action: {
+                    isChecked = true
+                    NSLog("Knappen try")
+                    
+                }) {
+                    Circle()
+                        .fill(isChecked ? Color.green : Color.gray)
+                        .frame(width: 40, height: 40)
+                        .overlay(
+                            Image(systemName: "trophy")
+                                .opacity(isChecked ? 1 : 0)
+                                .foregroundStyle(.black)
+                        )
+                }
+                .offset(x: 15, y: -15)
             }
-            .offset(x: 15, y: -15)
-            
-        }
     }
     
     func randomColor() -> UIColor {
