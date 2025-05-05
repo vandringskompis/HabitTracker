@@ -45,7 +45,9 @@ struct HabitView: View {
                     Spacer()
                     
                     Image(systemName: "bell")
+                       
                     Image(systemName: "trash")
+                        .foregroundStyle(Color.red.opacity(0.7))
                         .onTapGesture {
                             showDeleteView = true
                         }

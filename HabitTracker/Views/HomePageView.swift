@@ -18,22 +18,23 @@ struct HomePageView: View {
                 
                 ContentView()
                     .tabItem {
-                        Image(systemName: "trophy")
+                        Image(systemName: "house")
                         Text("Home")
                     }
                 
                 ProgressView()
                     .tabItem {
-                        Image(systemName: "trophy")
+                        Image(systemName: "align.vertical.bottom.fill")
                         Text("Progress")
                     }
                 
                 LogInView()
                     .tabItem {
                         Image(systemName: "trophy")
-                        Text("LogIn")
+                        Text("Rewards")
                     }
             }
+            .tint(.indigo)
         } else {
             
             NavigationStack {
