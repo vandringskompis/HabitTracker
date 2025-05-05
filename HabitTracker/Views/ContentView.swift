@@ -16,6 +16,7 @@ struct ContentView: View {
         entity: Habit.entity(),
         sortDescriptors: [],
         animation: .default)
+    
     private var habits: FetchedResults<Habit>
     
     @State var showAddHabitSheet = false
