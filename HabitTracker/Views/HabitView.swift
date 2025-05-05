@@ -22,8 +22,9 @@ struct HabitView: View {
             VStack{
                 HStack{
                     Spacer()
+                    Spacer()
                     Text("Laga mat")
-                        .font(.system(size: 35))
+                        .font(.system(size: 30))
                         .fontDesign(.monospaced)
                         .shadow(radius: 10.0, x: 20, y: 10)
             
@@ -32,8 +33,12 @@ struct HabitView: View {
                      }*/
                     Spacer()
                     
-                   
+                    Image(systemName: "bell")
+                    Image(systemName: "trash")
+                    
                 }
+                .padding()
+                
                 
                 HStack{
                     CalendarView()

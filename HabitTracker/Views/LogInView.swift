@@ -17,7 +17,7 @@ struct LogInView: View {
     var body: some View {
         NavigationStack {
             ZStack{
-                LinearGradient(gradient: Gradient(colors: [.red, .green]),
+                LinearGradient(gradient: Gradient(colors: [.blue, .green]),
                                startPoint: .top,
                                endPoint: .bottom)
                 .ignoresSafeArea()
