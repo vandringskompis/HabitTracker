@@ -24,7 +24,7 @@ struct ContentView: View {
     
     var body: some View {
        
-        NavigationView {
+        NavigationStack {
           
             ZStack{
                 LinearGradient(gradient: Gradient(colors: [.blue, .green]),
@@ -68,18 +68,17 @@ struct ContentView: View {
                                 habit in
                                 NavigationLink(destination: HabitView(/*habit: habit)*/)){
                                     HabitCardView(habit: habit)
-                                        .onTapGesture {
-                                            
-                                        }
+                                        .foregroundStyle(Color.black)
+                                    
                                 }
                             }
                         }
                         .padding()
                     }
-                    
                 }
             }
         }
+        .tint(.black)
     }
     
     private func deleteItems(offsets: IndexSet) {
@@ -157,8 +156,6 @@ struct HabitCardView : View {
         
     }
 }
-
-
 
 #Preview {
     ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
