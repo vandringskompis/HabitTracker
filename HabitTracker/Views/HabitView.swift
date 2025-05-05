@@ -14,6 +14,8 @@ struct HabitView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
     
+    @State var showDeleteView = false
+    
     var body: some View {
         
         ZStack{
@@ -32,13 +34,20 @@ struct HabitView: View {
                              .font(.system(size: 30))
                              .fontDesign(.monospaced)
                              .shadow(radius: 10.0, x: 20, y: 10)
+                         
+                             .alert("Are you sure you want to delete \"\(title)\"", isPresented: $showDeleteView) {
+                                 Button("Delete", role: .destructive) {
+                                     deleteHabit()
+                                 }
+                                 Button("Cancel", role: .cancel) {}
+                             }
                      }
                     Spacer()
                     
                     Image(systemName: "bell")
                     Image(systemName: "trash")
                         .onTapGesture {
-                            deleteHabit()
+                            showDeleteView = true
                         }
                     
                 }
@@ -58,7 +67,7 @@ struct HabitView: View {
                     
                     Spacer()
                     
-                    Text("Longest Streak: \n              (habit.longestStreak)")
+                    Text("Longest Streak: \n              \(habit.longestStreak)")
                         .font(.title)
                     
                     
