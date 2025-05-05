@@ -9,7 +9,12 @@ import SwiftUI
 
 struct HabitView: View {
     
-    //var habit : Habit
+    var habit : Habit
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.dismiss) var dismiss
+    
+    @State var showDeleteView = false
     
     var body: some View {
         
@@ -23,18 +28,29 @@ struct HabitView: View {
                 HStack{
                     Spacer()
                     Spacer()
-                    Text("Laga mat")
-                        .font(.system(size: 30))
-                        .fontDesign(.monospaced)
-                        .shadow(radius: 10.0, x: 20, y: 10)
             
-                    /* if let title = habit.title {
+                     if let title = habit.title {
                          Text(title)
-                     }*/
+                             .font(.system(size: 30))
+                             .fontDesign(.monospaced)
+                             .shadow(radius: 10.0, x: 20, y: 10)
+                         
+                             .alert("Are you sure you want to delete \"\(title)\"", isPresented: $showDeleteView) {
+                                 Button("Delete", role: .destructive) {
+                                     deleteHabit()
+                                 }
+                                 Button("Cancel", role: .cancel) {}
+                             }
+                     }
                     Spacer()
                     
                     Image(systemName: "bell")
+                       
                     Image(systemName: "trash")
+                        .foregroundStyle(Color.red.opacity(0.7))
+                        .onTapGesture {
+                            showDeleteView = true
+                        }
                     
                 }
                 .padding()
@@ -48,15 +64,13 @@ struct HabitView: View {
                 Spacer()
                 
                 HStack{
-                    Text("Streak: \n     0")
+                    Text("Streak: \n    \(habit.streak)")
                         .font(.title)
-                    //Text("\(habit.streak)")
                     
                     Spacer()
                     
-                    Text("Longest Streak: \n              6")
+                    Text("Longest Streak: \n              \(habit.longestStreak)")
                         .font(.title)
-                    //Text("\(habit.longestStreak)")
                     
                     
                 }
@@ -64,9 +78,15 @@ struct HabitView: View {
             }
         }
     }
-}
-
-#Preview {
     
-    HabitView()
+    func deleteHabit() {
+        viewContext.delete(habit)
+        do {
+            try viewContext.save()
+            print("Habit deleted. Success!")
+            dismiss()
+        } catch {
+            print("Error. Did not delete habit: \(error.localizedDescription)")
+        }
+    }
 }

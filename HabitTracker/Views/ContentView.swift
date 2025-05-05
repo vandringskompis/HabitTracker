@@ -66,7 +66,7 @@ struct ContentView: View {
                         LazyVGrid(columns: columns, spacing: 20){
                             ForEach(habits, id: \.self) {
                                 habit in
-                                NavigationLink(destination: HabitView(/*habit: habit)*/)){
+                                NavigationLink(destination: HabitView(habit: habit)){
                                     HabitCardView(habit: habit)
                                         .foregroundStyle(Color.black)
                                     
