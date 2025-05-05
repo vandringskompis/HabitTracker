@@ -28,7 +28,7 @@ struct HomePageView: View {
                         Text("Progress")
                     }
                 
-                LogInView()
+                RewardView()
                     .tabItem {
                         Image(systemName: "trophy")
                         Text("Rewards")

@@ -62,10 +62,17 @@ struct AddNewHabitView: View {
     func addHabit() {
         withAnimation {
             let newHabit = Habit(context: viewContext)
+            
+            let calendar = Calendar.current
+            let today = calendar.startOfDay(for: Date())
             newHabit.title = title
             newHabit.streak = 0
             newHabit.longestStreak = 0
-
+            
+            if let yesterday = calendar.date(byAdding: .day, value: -1, to: today) {
+                newHabit.lastCheck = yesterday
+            }
+            
             do {
                 try viewContext.save()
             } catch {
