@@ -13,10 +13,14 @@ struct ProgressView: View {
     
     @FetchRequest(
         entity: Habit.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Habit.longestStreak, ascending: false)],
+        sortDescriptors: [],
         animation: .default)
     
     private var habits: FetchedResults<Habit>
+    
+    @State var selectedFilter : String = "Today"
+    
+    let filters = ["Today", "Week", "Month", "All time"]
     
     var body: some View {
     
@@ -31,13 +35,22 @@ struct ProgressView: View {
                     .font(.system(size: 45))
                     .fontDesign(.monospaced)
                 
+                Picker("Filter", selection: $selectedFilter) {
+                    ForEach(filters, id: \.self) { filter in
+                        Text(filter)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding()
+                
                 List {
-                    ForEach(habits) { habit in
+                    ForEach(Array(habits)
+                        .sorted { $0.streak > $1.streak }, id: \.self) { habit in
                         HStack{
                                 Text(habit.title ?? "Title")
                                     .font(.title)
                             Spacer()
-                                Text("Streak \(habit.longestStreak)")
+                            Text("Streak: \(filterLogsCount(habit: habit, daysBack: selectedFilters()))")
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -64,6 +77,37 @@ struct ProgressView: View {
         
         return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
         
+    }
+    
+    func selectedFilters() -> Int {
+        
+        switch selectedFilter {
+            
+        case "Today":
+            return 1
+        
+        case "Week":
+            return 7
+            
+        case "Month":
+            return 30
+            
+        default:
+            return 1000
+        }
+    }
+    
+    func filterLogsCount(habit : Habit, daysBack: Int) -> Int {
+        
+        let calendar = Calendar.current
+        let startDate = calendar.date(byAdding: .day, value: -daysBack, to: Date()) ?? Date()
+        
+        let logs = (habit.logs as? Set<HabitLog>) ?? []
+        
+        return logs
+            .compactMap { $0.date}
+            .filter { $0 >= startDate}
+            .count
     }
 }
 
