@@ -150,6 +150,7 @@ struct HabitCardView : View {
         print("UpdateStreak körs")
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
+        let newLog = HabitLog(context: viewContext)
         //let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
           
       
@@ -160,6 +161,9 @@ struct HabitCardView : View {
             if (daysBetween == 1) {
                 habit.streak += 1
                 habit.lastCheck = today
+                newLog.date = Date()
+                newLog.habit = habit
+                
                 
                 if (habit.longestStreak <= habit.streak) {
                     habit.longestStreak = habit.streak
@@ -168,6 +172,7 @@ struct HabitCardView : View {
                 do {
                     try viewContext.save()
                     print("streak +1")
+                    print("Date: \(newLog.date ?? Date()) and \(newLog.habit ?? habit)")
                 } catch {
                     print(error)
                 }
@@ -180,10 +185,13 @@ struct HabitCardView : View {
                 
                 habit.lastCheck = today
                 habit.streak = 1
+                newLog.date = Date()
+                newLog.habit = habit
                 
                 do {
                     try viewContext.save()
                     print("streak = 0")
+                    print("Date: \(newLog.date ?? Date()) and \(newLog.habit ?? habit)")
                     
                 } catch {
                     print(error)
@@ -192,6 +200,7 @@ struct HabitCardView : View {
             } else {
                 habit.streak = 1
                 habit.lastCheck = today
+                
                 
                 do {
                     try viewContext.save()
