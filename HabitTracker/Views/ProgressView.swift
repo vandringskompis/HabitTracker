@@ -50,7 +50,7 @@ struct ProgressView: View {
                                 Text(habit.title ?? "Title")
                                     .font(.title)
                             Spacer()
-                            Text("Streak: \(filterLogsCount(habit: habit, daysBack: selectedFilters()))")
+                            Text("\(filterLogsCount(habit: habit, daysBack: selectedFilters()))")
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -97,6 +97,11 @@ struct ProgressView: View {
         }
     }
     
+    
+    /**
+     Count all the days a habit has been done, in a specific timeline. DaysBack is 1, 7, 30 or 1000 which is today, week, month and 1000 days.
+     */
+    
     func filterLogsCount(habit : Habit, daysBack: Int) -> Int {
         
         let calendar = Calendar.current
@@ -104,6 +109,9 @@ struct ProgressView: View {
         
         let logs = (habit.logs as? Set<HabitLog>) ?? []
         
+        // Look for every date that a habit has been done.
+        // Filter the days from startDate to now.
+        // Count the days that are filtered.
         return logs
             .compactMap { $0.date}
             .filter { $0 >= startDate}

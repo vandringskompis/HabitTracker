@@ -55,7 +55,6 @@ struct HabitView: View {
                 }
                 .padding()
                 
-                
                 HStack{
                     CalendarView()
                         .padding(30)
@@ -71,8 +70,6 @@ struct HabitView: View {
                     
                     Text("Longest Streak: \n              \(habit.longestStreak)")
                         .font(.title)
-                    
-                    
                 }
                 .padding()
             }
