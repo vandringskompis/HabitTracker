@@ -16,6 +16,7 @@ struct ContentView: View {
         entity: Habit.entity(),
         sortDescriptors: [],
         animation: .default)
+    
     private var habits: FetchedResults<Habit>
     
     @State var showAddHabitSheet = false
@@ -80,39 +81,16 @@ struct ContentView: View {
         }
         .tint(.black)
     }
-    
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { habits[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
-
-
 struct HabitCardView : View {
-    
-    @State var isChecked = false
+    @Environment(\.managedObjectContext) private var viewContext
+    @State var isChecked : Bool = false
     
     var habit : Habit
     
     var body : some View {
+        
         let myColor = randomColor()
         
             ZStack(alignment: .topTrailing) {
@@ -131,6 +109,7 @@ struct HabitCardView : View {
                 Button(action: {
                     isChecked = true
                     NSLog("Knappen try")
+                    updateStreak(habit: habit)
                     
                 }) {
                     Circle()
@@ -144,7 +123,86 @@ struct HabitCardView : View {
                 }
                 .offset(x: 15, y: -15)
             }
+        
+            .onAppear {
+                isChecked = checkIfDone()
+            }
     }
+    
+    func checkIfDone () -> Bool{
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        
+        
+        if let lastCheck = habit.lastCheck {
+            if calendar.isDate(lastCheck, inSameDayAs: today) {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func updateStreak(habit : Habit) {
+        
+        print("UpdateStreak körs")
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        //let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+          
+      
+        
+        if let lastCheck = habit.lastCheck {
+            let daysBetween = calendar.dateComponents([.day], from: lastCheck, to: today).day ?? 0
+            
+            if (daysBetween == 1) {
+                habit.streak += 1
+                habit.lastCheck = today
+                
+                if (habit.longestStreak <= habit.streak) {
+                    habit.longestStreak = habit.streak
+                }
+                
+                do {
+                    try viewContext.save()
+                    print("streak +1")
+                } catch {
+                    print(error)
+                }
+                
+            } else if (daysBetween > 1) {
+                
+                if (habit.longestStreak <= habit.streak) {
+                    habit.longestStreak = habit.streak
+                }
+                
+                habit.lastCheck = today
+                habit.streak = 1
+                
+                do {
+                    try viewContext.save()
+                    print("streak = 0")
+                    
+                } catch {
+                    print(error)
+                }
+                
+            } else {
+                habit.streak = 1
+                habit.lastCheck = today
+                
+                do {
+                    try viewContext.save()
+                    print("streak = 1")
+                } catch {
+                    print(error)
+                }
+            }
+        }
+    }
+    
     
     func randomColor() -> UIColor {
         
