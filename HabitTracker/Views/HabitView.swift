@@ -21,6 +21,8 @@ struct HabitView: View {
     
     var body: some View {
         
+       
+        
         ZStack{
         LinearGradient(gradient: Gradient(colors: [.blue, .green]),
                        startPoint: .top,
@@ -56,6 +58,9 @@ struct HabitView: View {
                                 NotificationsSettingsView(habit: habit, bellIcon: $bellIcon)
                                     .presentationDetents([.height(300), .medium, .large])
                                     .presentationDragIndicator(.automatic)
+                            }
+                            .onAppear {
+                                updateBellIcon()
                             }
                        
                     Image(systemName: "trash")
@@ -97,5 +102,28 @@ struct HabitView: View {
         } catch {
             print("Error. Did not delete habit: \(error.localizedDescription)")
         }
+    }
+    
+    func updateBellIcon () {
+        
+        if let notifications = habit.notify as? Set <Notification> {
+            for notification in notifications {
+                if let id = notification.notificationID {
+                    UNUserNotificationCenter.current().getPendingNotificationRequests { request in
+                     
+                        DispatchQueue.main.async {
+                            
+                            if request.contains(where: {$0.identifier == id}) {
+                                bellIcon = "bell"
+                            } else {
+                                bellIcon = "bell.slash"
+                            }
+                        }
+                    }
+                    return
+                }
+            }
+        }
+        bellIcon = "bell.slash"
     }
 }
