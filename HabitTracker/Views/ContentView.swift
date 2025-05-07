@@ -32,16 +32,46 @@ struct ContentView: View {
                                startPoint: .top,
                                endPoint: .bottom)
                 .ignoresSafeArea()
-                
+                .onAppear {
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                        if success {
+                            print("Notifications is allowed")
+                            
+                        } else if let error {
+                            print(error.localizedDescription)
+                        }
+                    }
+                }
                 VStack {
                     
                     HStack{
+                        Spacer()
                         Spacer()
                         Text("Habits")
                             .font(.system(size: 45))
                             .fontDesign(.monospaced)
                         Spacer()
+                        
+                        Image(systemName: "bell")
+                            .onTapGesture {
+                                Task{
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        await UIApplication.shared.open(url)
+                                    }
+                                }
+                            }
+                        Image(systemName: "gearshape")
+                            .onTapGesture {
+                                Task {
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        await UIApplication.shared.open(url)
+                                    }
+                                }
+                            }
+                        
                     }
+                    .padding()
+                    
                     HStack{
                         Spacer()
                         Button("New habit"){
