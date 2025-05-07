@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct HabitView: View {
     
@@ -14,7 +15,9 @@ struct HabitView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
     
+    @State var showNotificationView = false
     @State var showDeleteView = false
+    @State var bellIcon : String = "bell.slash"
     
     var body: some View {
         
@@ -28,23 +31,32 @@ struct HabitView: View {
                 HStack{
                     Spacer()
                     Spacer()
-            
-                     if let title = habit.title {
-                         Text(title)
-                             .font(.system(size: 30))
-                             .fontDesign(.monospaced)
-                             .shadow(radius: 10.0, x: 20, y: 10)
-                         
-                             .alert("Are you sure you want to delete \"\(title)\"", isPresented: $showDeleteView) {
-                                 Button("Delete", role: .destructive) {
-                                     deleteHabit()
-                                 }
-                                 Button("Cancel", role: .cancel) {}
-                             }
-                     }
+                    
+                    if let title = habit.title {
+                        Text(title)
+                            .font(.system(size: 30))
+                            .fontDesign(.monospaced)
+                            .shadow(radius: 10.0, x: 20, y: 10)
+                        
+                            .alert("Are you sure you want to delete \"\(title)\"", isPresented: $showDeleteView) {
+                                Button("Delete", role: .destructive) {
+                                    deleteHabit()
+                                }
+                                Button("Cancel", role: .cancel) {}
+                            }
+                    }
                     Spacer()
                     
-                    Image(systemName: "bell")
+                    
+                    Image(systemName: bellIcon)
+                        .onTapGesture {
+                                showNotificationView = true
+                            }
+                            .sheet(isPresented: $showNotificationView){
+                                NotificationsSettingsView(habit: habit, bellIcon: $bellIcon)
+                                    .presentationDetents([.height(300), .medium, .large])
+                                    .presentationDragIndicator(.automatic)
+                            }
                        
                     Image(systemName: "trash")
                         .foregroundStyle(Color.red.opacity(0.7))

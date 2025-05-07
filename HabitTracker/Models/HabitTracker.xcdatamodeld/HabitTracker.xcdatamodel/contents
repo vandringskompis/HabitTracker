@@ -6,10 +6,15 @@
         <attribute name="streak" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="logs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="HabitLog" inverseName="habit" inverseEntity="HabitLog"/>
+        <relationship name="notify" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Notification"/>
     </entity>
     <entity name="HabitLog" representedClassName="HabitLog" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="habit" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Habit" inverseName="logs" inverseEntity="Habit"/>
+    </entity>
+    <entity name="Notification" representedClassName="Notification" syncable="YES" codeGenerationType="class">
+        <attribute name="notificationID" optional="YES" attributeType="String"/>
+        <relationship name="id" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Habit"/>
     </entity>
     <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
         <attribute name="hashedPassword" optional="YES" attributeType="String"/>
