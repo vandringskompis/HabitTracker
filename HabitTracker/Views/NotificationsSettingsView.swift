@@ -39,6 +39,11 @@ struct NotificationsSettingsView: View {
                     .fontDesign(.monospaced)
                     .multilineTextAlignment(.center)
                 
+                if let scheduledNotification = scheduledNotification() {
+                    Text("Notification scheduled at: \(scheduledNotification.formatted(date: .omitted, time: .shortened))")
+                        .fontDesign(.monospaced)
+                }
+                    
                 
                 Spacer()
                 
@@ -107,6 +112,7 @@ struct NotificationsSettingsView: View {
             let newNotification = Notification(context: viewContext)
             
             newNotification.notificationID = newId
+            newNotification.time = date
             
             habit.addToNotify(newNotification)
             
@@ -120,6 +126,16 @@ struct NotificationsSettingsView: View {
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
+    }
+    
+    func scheduledNotification() -> Date? {
+        
+        if let notifications = habit.notify as? Set<Notification>,
+           let notification = notifications.first,
+           let time = notification.time {
+            return time
+        }
+        return nil
     }
 }
 

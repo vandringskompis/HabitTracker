@@ -9,8 +9,16 @@ import SwiftUI
 
 struct RewardView: View {
     var body: some View {
-        Text("Rewards")
         
+        ZStack {
+            LinearGradient(gradient: Gradient(colors: [.blue, .green]),
+                           startPoint: .top,
+                           endPoint: .bottom)
+            .ignoresSafeArea()
+           
+            Text("Rewards")
+            
+        }
     }
 }
 
