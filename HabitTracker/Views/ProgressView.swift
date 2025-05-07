@@ -23,7 +23,7 @@ struct ProgressView: View {
     let filters = ["Today", "Week", "Month", "All time"]
     
     var body: some View {
-    
+        
         ZStack {
             LinearGradient(gradient: Gradient(colors: [.blue, .green]),
                            startPoint: .top,
@@ -45,23 +45,23 @@ struct ProgressView: View {
                 
                 List {
                     ForEach(Array(habits)
-                        .sorted { $0.streak > $1.streak }, id: \.self) { habit in
-                        HStack{
+                        .sorted { filterLogsCount(habit: $0, daysBack: selectedFilters()) > filterLogsCount(habit: $1, daysBack: selectedFilters()) }, id: \.self) { habit in
+                            HStack{
                                 Text(habit.title ?? "Title")
                                     .font(.title)
-                            Spacer()
-                            Text("\(filterLogsCount(habit: habit, daysBack: selectedFilters()))")
+                                Spacer()
+                                Text("\(filterLogsCount(habit: habit, daysBack: selectedFilters()))")
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color(randomColor()))
+                            .contentShape(Rectangle())
+                            .clipShape(.rect(cornerRadius: 15))
+                            .overlay(RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.black, lineWidth: 1))
+                            .listRowBackground(Color.clear)
+                            
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color(randomColor()))
-                        .contentShape(Rectangle())
-                        .clipShape(.rect(cornerRadius: 15))
-                        .overlay(RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.black, lineWidth: 1))
-                        .listRowBackground(Color.clear)
-
-                    }
                 }
                 .scrollContentBackground(.hidden)
             }
@@ -84,8 +84,8 @@ struct ProgressView: View {
         switch selectedFilter {
             
         case "Today":
-            return 1
-        
+            return 0
+            
         case "Week":
             return 7
             
@@ -105,17 +105,31 @@ struct ProgressView: View {
     func filterLogsCount(habit : Habit, daysBack: Int) -> Int {
         
         let calendar = Calendar.current
-        let startDate = calendar.date(byAdding: .day, value: -daysBack, to: Date()) ?? Date()
+        
         
         let logs = (habit.logs as? Set<HabitLog>) ?? []
         
         // Look for every date that a habit has been done.
         // Filter the days from startDate to now.
         // Count the days that are filtered.
-        return logs
-            .compactMap { $0.date}
-            .filter { $0 >= startDate}
-            .count
+        
+        if daysBack == 0 {
+            
+            return logs
+                .compactMap { $0.date}
+                .filter { calendar.isDateInToday($0)}
+                .count
+            
+        } else {
+            
+            let now = calendar.startOfDay(for: Date())
+            let startDate = calendar.date(byAdding: .day, value: -daysBack, to: now) ?? now
+            
+            return logs
+                .compactMap { $0.date}
+                .filter { $0 >= startDate}
+                .count
+        }
     }
 }
 
