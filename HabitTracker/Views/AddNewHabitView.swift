@@ -9,11 +9,18 @@ import SwiftUI
 
 struct AddNewHabitView: View {
     @Environment(\.managedObjectContext) var viewContext
+    
+    @FetchRequest(
+        entity: Reward.entity(),
+        sortDescriptors: [],
+        animation: .default)
+    
+    private var rewards: FetchedResults<Reward>
+    
     @Environment(\.dismiss) var dismiss
     
     @State var title : String = ""
    
-    
     var body: some View {
         NavigationStack {
             ZStack{

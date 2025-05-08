@@ -42,6 +42,8 @@ struct NotificationsSettingsView: View {
                 if let scheduledNotification = scheduledNotification() {
                     Text("Notification scheduled at: \(scheduledNotification.formatted(date: .omitted, time: .shortened))")
                         .fontDesign(.monospaced)
+                } else {
+                    Text("No notification scheduled")
                 }
                     
                 
@@ -56,16 +58,7 @@ struct NotificationsSettingsView: View {
                     Button("Delete") {
                         bellIcon = "bell.slash"
                         
-                        if let notifications = habit.notify as? Set<Notification> {
-                            
-                            for notification in notifications {
-                                
-                                if let id = notification.notificationID {
-                                    let center = UNUserNotificationCenter.current()
-                                    center.removePendingNotificationRequests(withIdentifiers: [id])
-                                }
-                            }
-                        }
+                        deleteNotification()
                         dismiss()
                     }
                     .foregroundStyle(.red)
@@ -86,6 +79,18 @@ struct NotificationsSettingsView: View {
     }
     
     func setNotificationTime(habit : Habit, at date : Date) {
+        
+        if let existingNotification = habit.notify as? Set<Notification> {
+            let center = UNUserNotificationCenter.current()
+            
+            for notification in existingNotification {
+                if let id = notification.notificationID {
+                    center.removePendingNotificationRequests(withIdentifiers: [id])
+                }
+                viewContext.delete(notification)
+            }
+        }
+        
         
         let content = UNMutableNotificationContent()
         
@@ -136,6 +141,25 @@ struct NotificationsSettingsView: View {
             return time
         }
         return nil
+    }
+    
+    func deleteNotification() {
+        if let notifications = habit.notify as? Set<Notification> {
+            
+            for notification in notifications {
+                
+                if let id = notification.notificationID {
+                    let center = UNUserNotificationCenter.current()
+                    center.removePendingNotificationRequests(withIdentifiers: [id])
+                }
+                viewContext.delete(notification)
+            }
+            do {
+                try viewContext.save()
+            } catch {
+                print("Error: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
