@@ -39,6 +39,9 @@ struct NotificationsSettingsView: View {
                     .fontDesign(.monospaced)
                     .multilineTextAlignment(.center)
                 
+                
+                //Checks if a notification is already scheduled. Show time it is scheduled or say that no notification is schedueled.
+                
                 if let scheduledNotification = scheduledNotification() {
                     Text("Notification scheduled at: \(scheduledNotification.formatted(date: .omitted, time: .shortened))")
                         .fontDesign(.monospaced)
@@ -57,7 +60,6 @@ struct NotificationsSettingsView: View {
                    
                     Button("Delete") {
                         bellIcon = "bell.slash"
-                        
                         deleteNotification()
                         dismiss()
                     }
@@ -66,7 +68,6 @@ struct NotificationsSettingsView: View {
                     Spacer()
                     Button("Set time") {
                         setNotificationTime(habit: habit, at: selectedDate)
-                        
                         bellIcon = "bell"
                         dismiss()
                     }

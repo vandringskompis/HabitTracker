@@ -21,8 +21,6 @@ struct HabitView: View {
     
     var body: some View {
         
-       
-        
         ZStack{
         LinearGradient(gradient: Gradient(colors: [.blue, .green]),
                        startPoint: .top,
@@ -73,7 +71,7 @@ struct HabitView: View {
                 .padding()
                 
                 HStack{
-                    CalendarView()
+                    CalendarView(markedDays: logDates(for: habit))
                         .padding(30)
                 }
                 
@@ -101,6 +99,19 @@ struct HabitView: View {
             dismiss()
         } catch {
             print("Error. Did not delete habit: \(error.localizedDescription)")
+        }
+    }
+    
+    func logDates (for habit : Habit) -> [Date] {
+        
+        let calendar = Calendar.current
+        guard let logs = habit.logs as? Set<HabitLog> else {return [] }
+        
+        return logs.compactMap { log in
+            if let date = log.date {
+                return calendar.startOfDay(for: date)
+            }
+            return nil
         }
     }
     

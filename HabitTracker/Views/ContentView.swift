@@ -137,9 +137,15 @@ struct HabitCardView : View {
                 
                 
                 Button(action: {
-                    isChecked = true
-                    NSLog("Knappen try")
-                    updateStreak(habit: habit)
+                   
+                    if !isChecked {
+                        
+                        isChecked = true
+                        NSLog("Knappen try")
+                        updateStreak(habit: habit)
+                    }else {
+                        print("Habit done for the day")
+                    }
                     
                 }) {
                     Circle()
