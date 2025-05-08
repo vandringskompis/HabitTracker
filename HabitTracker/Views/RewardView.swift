@@ -17,7 +17,6 @@ struct RewardView: View {
             .ignoresSafeArea()
            
             Text("Rewards")
-            
         }
     }
 }

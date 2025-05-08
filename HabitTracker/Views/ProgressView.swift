@@ -106,7 +106,6 @@ struct ProgressView: View {
         
         let calendar = Calendar.current
         
-        
         let logs = (habit.logs as? Set<HabitLog>) ?? []
         
         // Look for every date that a habit has been done.
