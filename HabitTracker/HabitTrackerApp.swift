@@ -15,6 +15,8 @@ struct HabitTrackerApp: App {
         WindowGroup {
             HomePageView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                
+
         }
     }
 }

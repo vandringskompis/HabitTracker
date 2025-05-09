@@ -11,11 +11,6 @@ struct RewardView: View {
     
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
-    @State var selectedFilter : String = "Locked"
-    
-    let filters = ["Locked", "Unlocked"]
-    
-    
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
@@ -38,28 +33,23 @@ struct RewardView: View {
                     .font(.system(size: 45))
                     .fontDesign(.monospaced)
                 
-                
-                Picker("Filter", selection: $selectedFilter) {
-                    ForEach(filters, id: \.self) { filter in
-                        Text(filter)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
-                
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 20){
-                        ForEach (rewardList.shuffled()) { reward in
-                            Text(reward.title)
+                        
+                        ForEach(rewardsCoreData) { reward in
+                            HStack{
+                                Text(reward.title ?? "Title")
+                                Text(reward.emoji ?? "Emoji")
+                            }
+                            
+                            .frame(width: 175, height: 75)
+                            .contentShape(Rectangle())
+                            .background(.green)
+                            .clipShape(.rect(cornerRadius: 15))
+                            .overlay(RoundedRectangle(cornerRadius: 15)
+                                .stroke(Color.black, lineWidth: 1))
                         }
-                        .frame(width: 175, height: 75)
-                        .contentShape(Rectangle())
-                        .background(Color.gray)
-                        .clipShape(.rect(cornerRadius: 15))
-                        .overlay(RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.black, lineWidth: 1))
                     }
-                        .padding()
                 }
             }
         }
