@@ -34,17 +34,22 @@ struct RewardView: View {
                     .fontDesign(.monospaced)
                 
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 20){
+                    LazyVGrid(columns: columns, spacing: 10){
                         
                         ForEach(rewardsCoreData) { reward in
-                            HStack{
-                                Text(reward.title ?? "Title")
+                            VStack{
+                               
                                 Text(reward.emoji ?? "Emoji")
+                                    .font(.system(size: 60))
+                                Text(reward.title ?? "Title")
                             }
+                            .multilineTextAlignment(.center)
+
                             
-                            .frame(width: 175, height: 75)
+                            .frame(width: 175, height: 125)
                             .contentShape(Rectangle())
-                            .background(.green)
+                            .background(Color.yellow.opacity(0.7))
+                            .fontDesign(.monospaced)
                             .clipShape(.rect(cornerRadius: 15))
                             .overlay(RoundedRectangle(cornerRadius: 15)
                                 .stroke(Color.black, lineWidth: 1))

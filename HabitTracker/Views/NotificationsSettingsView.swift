@@ -214,7 +214,7 @@ struct NotificationsSettingsView: View {
 
         switch count {
         case 1:
-            addNotificationReward.title = "Added 1 notifications"
+            addNotificationReward.title = "Added 1 notification"
             addNotificationReward.emoji = "🥉"
         case 10:
             addNotificationReward.title = "Added 10 notifications"
