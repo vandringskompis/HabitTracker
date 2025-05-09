@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UserNotifications
+import CoreData
 
 struct NotificationsSettingsView: View {
     
@@ -19,64 +20,86 @@ struct NotificationsSettingsView: View {
     
     private var notifications: FetchedResults<Notification>
     
+    @FetchRequest(
+        entity: AddNotificationsCount.entity(),
+        sortDescriptors: [],
+        animation: .default)
+    
+    private var addNotificationsCoreData: FetchedResults<AddNotificationsCount>
+    
     @Environment(\.dismiss) var dismiss
     
     var habit : Habit
     
     @Binding var bellIcon : String
     @State var selectedDate = Date()
+    @State var rewardTitleAlert = ""
+    @State var showRewardAlert = false
     
     var body: some View {
-        ZStack {
-            LinearGradient(gradient: Gradient(colors: [.blue, .green]),
-                           startPoint: .top,
-                           endPoint: .bottom)
-            .ignoresSafeArea()
-            VStack {
-                
-                Text("Schedule notifiction")
-                    .font(.system(size: 45))
-                    .fontDesign(.monospaced)
-                    .multilineTextAlignment(.center)
-                
-                
-                //Checks if a notification is already scheduled. Show time it is scheduled or say that no notification is schedueled.
-                
-                if let scheduledNotification = scheduledNotification() {
-                    Text("Notification scheduled at: \(scheduledNotification.formatted(date: .omitted, time: .shortened))")
-                        .fontDesign(.monospaced)
-                } else {
-                    Text("No notification scheduled")
-                }
+        NavigationStack{
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [.blue, .green]),
+                               startPoint: .top,
+                               endPoint: .bottom)
+                .ignoresSafeArea()
+                VStack {
                     
-                
-                Spacer()
-                
-                DatePicker("Choose a time", selection: $selectedDate, displayedComponents: .hourAndMinute)
-                
-                Spacer()
-                
-                HStack{
-                   
-                    Button("Delete") {
-                        bellIcon = "bell.slash"
-                        deleteNotification()
-                        dismiss()
+                    Text("Schedule notifiction")
+                        .font(.system(size: 45))
+                        .fontDesign(.monospaced)
+                        .multilineTextAlignment(.center)
+                    
+                    
+                    //Checks if a notification is already scheduled. Show time it is scheduled or say that no notification is schedueled.
+                    
+                    if let scheduledNotification = scheduledNotification() {
+                        Text("Notification scheduled at: \(scheduledNotification.formatted(date: .omitted, time: .shortened))")
+                            .fontDesign(.monospaced)
+                    } else {
+                        Text("No notification scheduled")
                     }
-                    .foregroundStyle(.red)
+                    
                     
                     Spacer()
-                    Button("Set time") {
-                        setNotificationTime(habit: habit, at: selectedDate)
-                        bellIcon = "bell"
-                        dismiss()
+                    
+                    DatePicker("Choose a time", selection: $selectedDate, displayedComponents: .hourAndMinute)
+                    
+                    Spacer()
+                    
+                    HStack{
+                        
+                        Button("Delete") {
+                            bellIcon = "bell.slash"
+                            deleteNotification()
+                            dismiss()
+                        }
+                        .foregroundStyle(.red)
+                        
+                        Spacer()
+                        Button("Set time") {
+                            setNotificationTime(habit: habit, at: selectedDate)
+                            bellIcon = "bell"
+                            
+                            if !showRewardAlert {
+                                dismiss()
+                            }
+                          
+                        }
+                        .customStyleButton()
                     }
-                    .customStyleButton()
                 }
+                .padding()
+                
             }
-            .padding()
-            
         }
+        .alert(isPresented: $showRewardAlert) {
+            Alert(title: Text("Reward unlocked!"),
+                  message: Text("\"\(rewardTitleAlert)\""),
+                  dismissButton: .default(Text("Wohoo!!")) {
+                dismiss()
+            }
+            )}
     }
     
     func setNotificationTime(habit : Habit, at date : Date) {
@@ -124,12 +147,32 @@ struct NotificationsSettingsView: View {
             
             newNotification.id = habit
             
-            do {
-                try viewContext.save()
-            } catch {
-                print("New notificationId not added")
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            
+            let fetchAddNotificationCount : NSFetchRequest <AddNotificationsCount> = AddNotificationsCount.fetchRequest()
+            
+            if let existingCount = try? viewContext.fetch(fetchAddNotificationCount).first {
+                
+                existingCount.count += 1
+                if let rewardTitle = addToRewardListNotification(for: Int(existingCount.count)) {
+                    rewardTitleAlert = "🎉 \(rewardTitle) unlocked!"
+                    showRewardAlert = true
+                }
+                
+            } else {
+                let newCount = AddNotificationsCount(context: viewContext)
+                newCount.count = 1
+                if let rewardTitle = addToRewardListNotification(for: 1) {
+                    rewardTitleAlert = "🎉 \(rewardTitle) unlocked!"
+                    showRewardAlert = true
+                }
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    print("New notificationId not added")
+                    let nsError = error as NSError
+                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                }
             }
         }
     }
@@ -161,6 +204,32 @@ struct NotificationsSettingsView: View {
                 print("Error: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func addToRewardListNotification(for count : Int) -> String? {
+        
+        guard [1, 10, 30, 100].contains(count) else {return nil}
+        
+        let addNotificationReward = Reward(context: viewContext)
+
+        switch count {
+        case 1:
+            addNotificationReward.title = "Added 1 notification"
+            addNotificationReward.emoji = "🥉"
+        case 10:
+            addNotificationReward.title = "Added 10 notifications"
+            addNotificationReward.emoji = "🥈"
+        case 30:
+            addNotificationReward.title = "Added 30 notifications"
+            addNotificationReward.emoji = "🥇"
+        case 100:
+            addNotificationReward.title = "Added 100 notifications"
+            addNotificationReward.emoji = "🏆"
+        default:
+            break
+        }
+        
+        return addNotificationReward.title
     }
 }
 

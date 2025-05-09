@@ -13,8 +13,6 @@ struct CreateAccountView: View {
     @State var username : String = ""
     @State var password : String = ""
     
-    @StateObject var authViewModel = AuthViewModel()
-    
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
